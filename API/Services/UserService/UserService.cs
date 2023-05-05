@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
@@ -10,9 +12,6 @@ namespace PokémonChallenge.Services.UserService
 {
     public class UserService : IUserService
     {
-        private static List<User> users = new List<User> {
-
-        };
         private readonly IMapper _mapper;
         private readonly DataContext _context;
 
@@ -21,14 +20,13 @@ namespace PokémonChallenge.Services.UserService
             _mapper = mapper;
             _context = context;
         }
-        public async Task<ServiceResponse<List<GetUserDto>>> AddUser(AddUserDto newUser)
+        public async Task<ServiceResponse<GetUserDto>> AddUser(AddUserDto newUser)
         {
-            var serviceResponse = new ServiceResponse<List<GetUserDto>>();
+            var serviceResponse = new ServiceResponse<GetUserDto>();
             var user = _mapper.Map<User>(newUser);
-            user.Id = users.Max(u => u.Id) + 1;
             await _context.AddAsync(user);
             await _context.SaveChangesAsync();
-            serviceResponse.Data = users.Select(c => _mapper.Map<GetUserDto>(c)).ToList();
+            serviceResponse.Data = _mapper.Map<GetUserDto>(user);
             return serviceResponse;
         }
 
@@ -37,14 +35,14 @@ namespace PokémonChallenge.Services.UserService
             var serviceResponse = new ServiceResponse<List<GetUserDto>>();
             try
             {
-                var user = users.FirstOrDefault(u => u.Id == id);
-                if (user is null)
-                {
-                    throw new Exception($"user with Id '{id}' not found"); 
-                }
+                // var user = users.FirstOrDefault(u => u.Id == id);
+                // if (user is null)
+                // {
+                //     throw new Exception($"user with Id '{id}' not found"); 
+                // }
                 
-                users.Remove(user);
-                serviceResponse.Data = users.Select(c => _mapper.Map<GetUserDto>(c)).ToList();
+                // users.Remove(user);
+                // serviceResponse.Data = users.Select(c => _mapper.Map<GetUserDto>(c)).ToList();
             }
             catch(Exception e) {
                 serviceResponse.Success = false;
@@ -53,7 +51,8 @@ namespace PokémonChallenge.Services.UserService
 
             return serviceResponse;
         }
-
+        [EnableCors()]
+        [HttpGet]
         public async Task<ServiceResponse<List<GetUserDto>>> GetAllUsers()
         {
             var serviceResponse = new ServiceResponse<List<GetUserDto>>();
@@ -65,8 +64,8 @@ namespace PokémonChallenge.Services.UserService
         public async Task<ServiceResponse<GetUserDto>> GetUserById(int id)
         {
             var serviceResponse = new ServiceResponse<GetUserDto>();
-            var user = users.FirstOrDefault(u => u.Id == id);
-            serviceResponse.Data = _mapper.Map<GetUserDto>(user);
+            // var user = users.FirstOrDefault(u => u.Id == id);
+            //serviceResponse.Data = _mapper.Map<GetUserDto>(user);
             return serviceResponse;
         }
 
@@ -75,14 +74,14 @@ namespace PokémonChallenge.Services.UserService
             var serviceResponse = new ServiceResponse<GetUserDto>();
             try
             {
-                var user = users.FirstOrDefault(u => u.Id == updatedUser.Id);
-                if (user is null)
-                {
-                    throw new Exception($"user with Id '{updatedUser.Id}' not found"); 
-                }
+                // var user = users.FirstOrDefault(u => u.Id == updatedUser.Id);
+                // if (user is null)
+                // {
+                //     throw new Exception($"user with Id '{updatedUser.Id}' not found"); 
+                // }
 
-                _mapper.Map(updatedUser, user);
-                serviceResponse.Data = _mapper.Map<GetUserDto>(user);
+                // _mapper.Map(updatedUser, user);
+                // serviceResponse.Data = _mapper.Map<GetUserDto>(user);
             }
             catch(Exception e) {
                 serviceResponse.Success = false;

@@ -13,11 +13,8 @@ namespace Data
 
         }
         public DbSet<User> Users => Set<User>();
-        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        // {
-        //     var connectionString = "server=localhost;user=root;password=;database=pokemon";
-        //     var serverVersion = new MySqlServerVersion(new Version(8,0,31));
-        //     optionsBuilder.UseMySql(connectionString, serverVersion);
-        // }
+        public DbSet<Challenge> Challenges => Set<Challenge>();
+        public DbSet<Pokemon> Pokemon => Set<Pokemon>();
+        public DbSet<PokemonsOwnedUsers> PokemonsOwnedUsers => Set<PokemonsOwnedUsers>();
     }  
 }

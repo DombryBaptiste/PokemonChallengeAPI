@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using PokémonChallenge.Services.AuthService;
 
 namespace PokémonChallenge.Controllers
 {
@@ -16,27 +17,45 @@ namespace PokémonChallenge.Controllers
     {
         public static User user = new User();
         private readonly IConfiguration _configuration;
+        private readonly IAuthService _authService;
         
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, IAuthService authService)
         {
             _configuration = configuration;
+            _authService = authService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<User>> GetById(int id)
+        {
+            var response = await _authService.GetUserById(id);
+
+            if(response.Data is null){
+                return BadRequest($"User with id {id} not found.");
+            }
+            return Ok(response);
+        }
+        [HttpGet("all")]
+        public async Task<ActionResult<User>> GetAllUsers()
+        {
+            var response = await _authService.GetAllUsers();
+
+            if(response.Data is null){
+                return BadRequest($"No users found.");
+            }
+            return Ok(response);
         }
 
         [HttpPost("register")]
-        public ActionResult<User> Register(GetUserDto request)
+        public async Task<ActionResult<User>> Register(AddUserDto user)
         {
-            string PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.PasswordHash);
-            User newUser = new User();
-            user.Pseudo = request.Pseudo;
-            user.PasswordHash = PasswordHash;
-
-            return Ok(user);
+            return Ok(await _authService.AddUser(user));
         }
 
         [HttpPost("login")]
         public ActionResult<User> Login(GetUserDto request)
         {
-           if(user.Pseudo != request.Pseudo) 
+           if(user.Pseudo != request.Pseudo)
            {
                 return BadRequest("User not found.");
            }

@@ -13,6 +13,9 @@ namespace Api
             CreateMap<User, GetUserDto>();
             CreateMap<AddUserDto, User>();
             CreateMap<UpdateUserDto, User>();
+            CreateMap<GetPokemonDto, Pokemon>();
+            CreateMap<Pokemon, GetPokemonDto>();
+            CreateMap<AddPokemonDto, Pokemon>();
         }
     }
 }

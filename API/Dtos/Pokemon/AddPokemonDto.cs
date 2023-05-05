@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Models
+namespace Dtos.Pokemon
 {
-    public class Pokemon
+    public class AddPokemonDto
     {
-        public int Id { get; set; }
         public int PkmId { get; set; }
-        public string ?PkmName { get; set; } = string.Empty;
+        public string ?PkmName { get; set; }
         public string ?PkmImgUrl { get; set; }
     }
 }
